@@ -79,7 +79,7 @@ class Saml2Client(Base):
 
         return reqid, info
 
-    def global_logout(self, name_id, reason="", expire=None, sign=None):
+    def global_logout(self, name_id, session_index, reason="", expire=None, sign=None):
         """ More or less a layer of indirection :-/
         Bootstrapping the whole thing by finding all the IdPs that should
         be notified.
@@ -104,9 +104,9 @@ class Saml2Client(Base):
 
         # find out which IdPs/AAs I should notify
         entity_ids = self.users.issuers_of_info(name_id)
-        return self.do_logout(name_id, entity_ids, reason, expire, sign)
+        return self.do_logout(name_id, session_index, entity_ids, reason, expire, sign)
 
-    def do_logout(self, name_id, entity_ids, reason, expire, sign=None,
+    def do_logout(self, name_id, session_index, entity_ids, reason, expire, sign=None,
                   expected_binding=None):
         """
 
@@ -150,7 +150,8 @@ class Saml2Client(Base):
                 destination = destinations(srvs)[0]
                 logger.info("destination to provider: %s" % destination)
                 req_id, request = self.create_logout_request(
-                    destination, entity_id, name_id=name_id, reason=reason,
+                    destination, entity_id, name_id=name_id,
+                    session_index=session_index, reason=reason,
                     expire=expire)
 
                 #to_sign = []

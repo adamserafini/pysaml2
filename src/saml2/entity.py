@@ -47,6 +47,7 @@ from saml2.samlp import ArtifactResponse
 from saml2.samlp import Artifact
 from saml2.samlp import LogoutRequest
 from saml2.samlp import AttributeQuery
+from saml2.samlp import SessionIndex
 from saml2.mdstore import destinations
 from saml2 import BINDING_HTTP_POST
 from saml2 import BINDING_HTTP_REDIRECT
@@ -671,7 +672,7 @@ class Entity(HTTPBase):
     # ------------------------------------------------------------------------
 
     def create_logout_request(self, destination, issuer_entity_id,
-                              subject_id=None, name_id=None,
+                              subject_id=None, name_id=None, session_index=None,
                               reason=None, expire=None, message_id=0,
                               consent=None, extensions=None, sign=False):
         """ Constructs a LogoutRequest
@@ -705,6 +706,7 @@ class Entity(HTTPBase):
 
         return self._message(LogoutRequest, destination, message_id,
                              consent, extensions, sign, name_id=name_id,
+                             session_index=SessionIndex(text=session_index),
                              reason=reason, not_on_or_after=expire,
                              issuer=self._issuer())
 
