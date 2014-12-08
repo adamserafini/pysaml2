@@ -471,6 +471,7 @@ class AuthnResponse(StatusResponse):
         self.assertion = None
         self.assertions = []
         self.session_not_on_or_after = 0
+        self.session_index = None
         self.allow_unsolicited = allow_unsolicited
         self.require_signature = want_assertions_signed
         self.require_response_signature = want_response_signed
@@ -543,8 +544,13 @@ class AuthnResponse(StatusResponse):
                         authn_statement.session_not_on_or_after))
             else:
                 return False
+
+        # Authorisation Statements MUST have a session_index if the IdP server
+        # supports the Single Logout Profile
+        if hasattr(authn_statement, 'session_index'):
+            self.session_index = authn_statement.session_index
+
         return True
-        # check authn_statement.session_index
 
     def condition_ok(self, lax=False):
         if self.test:
@@ -911,7 +917,8 @@ class AuthnResponse(StatusResponse):
         else:
             return {"ava": self.ava, "name_id": self.name_id,
                     "came_from": self.came_from, "issuer": self.issuer(),
-                    "not_on_or_after": nooa, "authn_info": self.authn_info()}
+                    "not_on_or_after": nooa, "authn_info": self.authn_info(),
+                    "session_index": self.session_index}
 
     def __str__(self):
         return "%s" % self.xmlstr

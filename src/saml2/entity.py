@@ -672,9 +672,9 @@ class Entity(HTTPBase):
     # ------------------------------------------------------------------------
 
     def create_logout_request(self, destination, issuer_entity_id,
-                              subject_id=None, name_id=None, session_index=None,
-                              reason=None, expire=None, message_id=0,
-                              consent=None, extensions=None, sign=False):
+                              subject_id=None, name_id=None, reason=None,
+                              expire=None, message_id=0, consent=None,
+                              extensions=None, sign=False, session_index=""):
         """ Constructs a LogoutRequest
 
         :param destination: Destination of the request

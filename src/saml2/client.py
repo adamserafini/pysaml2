@@ -79,7 +79,9 @@ class Saml2Client(Base):
 
         return reqid, info
 
-    def global_logout(self, name_id, session_index, reason="", expire=None, sign=None):
+    def global_logout(
+            self, name_id, reason="",
+            expire=None, sign=None, session_index=""):
         """ More or less a layer of indirection :-/
         Bootstrapping the whole thing by finding all the IdPs that should
         be notified.
@@ -91,6 +93,8 @@ class Saml2Client(Base):
             If this time has passed don't bother.
         :param sign: Whether the request should be signed or not.
             This also depends on what binding is used.
+        :param session_index: The IdP-provided applicable session_index that
+            should be logged out
         :return: Depends on which binding is used:
             If the HTTP redirect binding then a HTTP redirect,
             if SOAP binding has been used the just the result of that
@@ -104,10 +108,11 @@ class Saml2Client(Base):
 
         # find out which IdPs/AAs I should notify
         entity_ids = self.users.issuers_of_info(name_id)
-        return self.do_logout(name_id, session_index, entity_ids, reason, expire, sign)
+        return self.do_logout(
+            name_id, entity_ids, reason, expire, sign, session_index)
 
-    def do_logout(self, name_id, session_index, entity_ids, reason, expire, sign=None,
-                  expected_binding=None):
+    def do_logout(self, name_id, entity_ids, reason, expire,
+                  sign=None, expected_binding=None, session_index=""):
         """
 
         :param name_id: Identifier of the Subject (a NameID instance)
@@ -118,6 +123,7 @@ class Saml2Client(Base):
         :param sign: Whether to sign the request or not
         :param expected_binding: Specify the expected binding then not try it
             all
+        :param session_index: The IdP-provided session_index
         :return:
         """
         # check time
