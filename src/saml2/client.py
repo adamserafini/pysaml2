@@ -112,7 +112,7 @@ class Saml2Client(Base):
             name_id, entity_ids, reason, expire, sign, session_index)
 
     def do_logout(self, name_id, entity_ids, reason, expire,
-                  sign=None, expected_binding=None, session_index=""):
+                  sign=None, session_index="", expected_binding=None):
         """
 
         :param name_id: Identifier of the Subject (a NameID instance)
